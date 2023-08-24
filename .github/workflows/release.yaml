@@ -2,11 +2,12 @@ name: Release
 
 on:
   push:
-    # paths:
-    #   - ".changeset/**"
-    #   - "packages/**"
     branches:
       - main
+    paths:
+      - ".changeset/**"
+      - "packages/**"
+
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
