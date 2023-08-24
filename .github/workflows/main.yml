@@ -1,0 +1,48 @@
+name: Publish NPM Package to GCR
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Install Dependencies
+        run: npm install
+
+      - id: "auth"
+        uses: google-github-actions/auth@v1.1.1
+        with:
+          token_format: "access_token"
+          credentials_json: "${{ secrets.GCLOUD_AUTH }}"
+
+      - uses: "docker/login-action@v1"
+        with:
+          registry: "asia-southeast1-docker.pkg.dev" # or asia-southeast1-docker.pkg.dev
+          username: "oauth2accesstoken"
+          password: "${{ steps.auth.outputs.access_token }}"
+
+      # This example runs "docker login" directly to Artifact Registry.
+      - run: |-
+          echo '${{ steps.auth.outputs.access_token }}' | docker login -u oauth2accesstoken --password-stdin https://asia-southeast1-docker.pkg.dev
+
+      - name: Set up gcloud Cloud SDK environment
+        uses: google-github-actions/setup-gcloud@v1.1.1
+
+      - name: "Use gcloud CLI"
+        run: 'gcloud auth list --filter=status:ACTIVE --format="value(account)"'
+
+      - name: Publish NPM Package to GAR
+        run: |
+          npm publish --registry=https://asia-southeast1-npm.pkg.dev/nodejs-395910/test-github-actions
