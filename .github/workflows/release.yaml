@@ -24,16 +24,16 @@ jobs:
       #   uses: ./.github/common-actions/install
 
       - name: Build
-        run: pnpm build
+        run: npm build
 
       - name: Tests
-        run: pnpm test
+        run: npm test
 
       - name: Create Release Pull Request or Publish to NPM
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: pnpm release
+          publish: npm release
           commit: "ci(changesets): version packages"
           setupGitUser: false
         env:
