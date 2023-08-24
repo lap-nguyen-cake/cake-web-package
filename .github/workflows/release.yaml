@@ -23,8 +23,8 @@ jobs:
       # - name: Install
       #   uses: ./.github/common-actions/install
 
-      # - name: Build
-      #   run: pnpm build
+      - name: Build
+        run: pnpm build
 
       - name: Tests
         run: pnpm test
